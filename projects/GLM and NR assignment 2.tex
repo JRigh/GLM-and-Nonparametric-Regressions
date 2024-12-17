@@ -1,0 +1,252 @@
+\documentclass[8p, a4paper] {article}
+
+\usepackage{geometry}
+ \geometry{
+ a4paper,
+ total={130mm,300mm},
+ left=40mm,
+ top=25mm,
+ }
+
+\usepackage [T1] {fontenc}
+\usepackage{lmodern}
+\usepackage[utf8] {inputenc}
+\usepackage[english] {label}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage[round] {natbib}
+\usepackage[pdftex]{graphicx}
+\usepackage{graphicx}
+\usepackage[11pt]{moresize}
+\usepackage{listings}
+\usepackage[svgnames]{xcolor}
+\graphicspath{  {C:/Users/Righ/Desktop/images/}  }
+\usepackage{color}     
+\usepackage{lmodern}
+\def\one{\mbox{1\hspace{-4.25pt}\fontsize{12}{14.4}\selectfont\textrm{1}}} % 11pt 
+
+\newenvironment{spmatrix}[1]
+ {\def\mysubscript{#1}\mathop\bgroup\begin{pmatrix}}
+ {\end{pmatrix}\egroup_{\textstyle\mathstrut\mysubscript}}
+
+\lstset{language=R,
+    stringstyle=\color{DarkGreen},
+    otherkeywords={0,1,2,3,4,5,6,7,8,9},
+    morekeywords={TRUE,FALSE},
+    deletekeywords={data,frame,length,as,character},
+    keywordstyle=\color{blue},
+    commentstyle=\color{teal},
+}
+
+
+
+\author{Julian Sampedro}
+\title{}
+\date{\today}
+
+
+
+\begin{document}
+
+\noindent
+\begin{center}
+\textbf{\huge Question 1}
+\end{center}
+
+
+\vspace{15}
+\noindent
+Q: Download the dataset, and plot it in R. Upload a picture of your graph displaying the data and comment on the features of the data. Does it present any trends or quasi-periodic behavior? 
+
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=14cm]{plot1R}
+\end{center}
+\end{figure}
+
+
+A: The data, from the plot, does not exhibit any particular linear trend or periodic behavior and appear to be stationary: constant variance and mean over time.
+
+
+\vspace{15}
+\noindent
+Code:
+
+\tiny
+\begin{lstlisting}[language=R]
+# import data
+yt = read.delim("C:/Users/julia/OneDrive/Desktop/Statistics notes/w50y2024/data.txt", 
+header = FALSE)
+yt = as.numeric(data$V1)
+plot(yt, type = 'l', col = "blue", main = 'Plot of data',
+     xlab = "Index", ylab = "Value", 
+     main = "Plot of Data")
+\end{lstlisting}
+
+
+
+\normalsize
+
+\vspace{15}
+\noindent
+\begin{center}
+\textbf{\huge Question 2}
+\end{center}
+
+\vspace{15}
+\noindent
+Q: Modify the code below to obtain the maximum likelihood estimators (MLEs) for the AR coefficients under the conditional likelihood. For this you will assume an autoregressive model of order $p=8$. The parameters of the model are $\boldsymbol{\phi} = ( \phi_{1},... , \phi_{8})^{T}$ and $v$. You will compute the MLE of $\boldsymbol{\phi}$, denoted as $\hat{\boldsymbol{\phi}}.
+
+\vspace{15}
+\noindent
+A: The maximum likelihood estimates are $\hatä\boldsymbol{\phi}} = ( 1.60987, -0.8934844, -0.0004550485, 0.008435584, \\
+-0.02283475, 0.001826861, -0.01358144, 0.00909051)^{T}$.
+
+\newpage
+\noindent
+Code:
+
+
+\tiny
+\begin{lstlisting}[language=R]
+## Case 1: Conditional likelihood
+set.seed(2024)
+p=8
+y=rev(yt[(p+1):T]) # response
+X=t(matrix(yt[rev(rep((1:p),T-p)+rep((0:(T-p-1)),rep(p,T-p)))],p,T-p));
+XtX=t(X)%*%X
+XtX_inv=solve(XtX)
+phi_MLE=XtX_inv%*%t(X)%*%y # MLE for phi
+s2=sum((y - X%*%phi_MLE)^2)/(length(y) - p) #unbiased estimate for v
+
+cat("\n MLE of conditional likelihood for phi: ", phi_MLE, "\n",
+    "Estimate for v: ", s2, "\n")
+ MLE of conditional likelihood for phi:  1.60987 -0.8934844 -0.0004550485 0.008435584 -0.02283475 0.001826861 
+-0.01358144 0.00909051 
+ Estimate for v:  0.9568277 
+\end{lstlisting}
+
+\normalsize
+
+\noindent
+\begin{center}
+\textbf{\huge Question 3}
+\end{center}
+
+
+\vspace{15}
+\noindent
+Q: Obtain an unbiased estimator for the observational variance of the $AR(8)$.. You will compute the unbiased estimator for $v$ denoted as $s^{2}$.
+
+\vspace{15}
+\noindent
+A: The estimator for $v$ is and $s^{2} = 0.9568277$.
+
+
+\normalsize
+
+\noindent
+\begin{center}
+\textbf{\huge Question 4}
+\end{center}
+
+
+\vspace{15}
+\noindent
+Q: Modify the code below to obtain $500$ samples from the posterior distribution of the parameters  $\boldsymbol{\phi} = ( \phi_{1},... , \phi_{8})^{T}$ and $v$. Once you obtain samples from the posterior distribution you will compute the posterior means of $\boldsymbol{\phi}$ and $v$, denoted as $\hat{\boldsymbol{\phi}}$​ and $\hat{v}$ respectively.
+
+\vspace{15}
+\noindent
+A: The posterior means are $\hat{\boldsymbol{\phi}} = ( 1.605355159, -0.885135355, -0.004239663,  0.007291180, \\
+ -0.026931834,  0.011587524, -0.021160654,  0.011207555)^{T}$. The rounded results are $\hat{\boldsymbol{\phi}} = (1.605, -0.885, -0.004,  0.007, -0.027,  0.012, -0.021,  0.011)^{T}$ and $\hat{v} = 0.967$ .
+
+
+\vspace{15}
+\noindent
+Code:
+
+\tiny
+\begin{lstlisting}[language=R]
+n_sample=500 # posterior sample size
+library(MASS)
+
+## step 1: sample v from inverse gamma distribution
+v_sample=1/rgamma(n_sample, (T-2*p)/2, sum((y-X%*%phi_MLE)^2)/2)
+
+## step 2: sample phi conditional on v from normal distribution
+phi_sample=matrix(0, nrow = n_sample, ncol = p)
+for(i in 1:n_sample){
+  phi_sample[i, ]=mvrnorm(1,phi_MLE,Sigma=v_sample[i]*XtX_inv)
+}
+
+#posterior means
+apply(phi_sample, 2, mean)
+# [1]  1.605355159 -0.885135355 -0.004239663  0.007291180 
+# -0.026931834  0.011587524 -0.021160654  0.011207555
+
+round(apply(phi_sample, 2, mean),3)
+
+#rounded variance estimate
+round(mean(v_sample), 3)
+\end{lstlisting}
+
+
+
+\normalsize
+
+\newpage
+
+\noindent
+\begin{center}
+\textbf{\huge Question 5}
+\end{center}
+
+
+\vspace{15}
+\noindent
+Q: Modify the code below to use the function polyroot and obtain the moduli and periods of the reciprocal roots of the AR polynomial evaluated at the posterior mean $\hat{\boldsymbol{\phi}}$.
+
+\vspace{15}
+\noindent
+A: The moduli and periods of the reciprocal roots would then be: 
+
+
+\vspace{5}
+\noindent
+Moduli: 0.963, 0.472, 0.963, 0.506, 0.506, 0.495, 0.472, 0.428
+
+
+\vspace{5}
+\noindent
+Periods: -1.179700e+01, -3.019000e+00,  1.179700e+01,  5.800000e+00, -5.800000e+00,  2.000000e+00,  3.019000e+00, -1.580598e+16
+
+
+
+\vspace{15}
+\noindent
+Code:
+
+\tiny
+\begin{lstlisting}[language=R]
+# Assume the folloing AR coefficients for an AR(8)
+phi= apply(phi_sample, 2, mean)
+roots=1/polyroot(c(1, -phi)) # compute reciprocal characteristic roots
+r=Mod(roots) # compute moduli of reciprocal roots
+lambda=2*pi/Arg(roots) # compute periods of reciprocal roots
+# print results modulus and frequency by decreasing order
+print(cbind(r, abs(lambda))[order(r, decreasing=TRUE), ][c(2,4,6,8),]) 
+
+#                         r             
+# [1,] 0.9632800 1.179690e+01
+# [2,] 0.5057569 5.799588e+00
+# [3,] 0.4720255 3.019354e+00
+# [4,] 0.4280434 1.580598e+16
+\end{lstlisting}
+
+
+
+\normalsize
+
+
+\end{document}
